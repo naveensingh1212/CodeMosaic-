@@ -1,27 +1,40 @@
 class Solution {
-public:
-    void dfs(int current, int distance, const vector<int>& edges, vector<int>& distances) {
-        while (current != -1 && distances[current] == -1) {
-            distances[current] = distance++;
-            current = edges[current];
+private:
+    void dfs(vector<int>& edges, int node, vector<int>& dist, vector<bool>& visited) {
+        int distance = 0;
+        while (node != -1 && !visited[node]) {
+            dist[node] = distance++;
+            visited[node] = true;
+            node = edges[node];
         }
     }
 
-    int closestMeetingNode(vector<int>& edges, int start1, int start2) {
-        int res = -1, Min_Of_Max = INT_MAX, n = edges.size();
-        vector<int> dist1(n, -1), dist2(n, -1);
-        dfs(start1, 0, edges, dist1);
-        dfs(start2, 0, edges, dist2);
+public:
+    int closestMeetingNode(vector<int>& edges, int node1, int node2) {
+        int n = edges.size();
+        vector<int> dist1(n, INT_MAX);
+        vector<int> dist2(n, INT_MAX);
 
-        for (int i = 0; i < n; i++) {
-            if (dist1[i] >= 0 && dist2[i] >= 0) {
+        vector<bool> visited1(n, false);
+        vector<bool> visited2(n, false);
+
+        dfs(edges, node1, dist1, visited1);
+        dfs(edges, node2, dist2, visited2);
+
+        int minDistNode = -1;
+        int minDistTillNow = INT_MAX;
+
+        for (int i = 0; i < n; ++i) {
+            if (dist1[i] != INT_MAX && dist2[i] != INT_MAX) {
                 int maxDist = max(dist1[i], dist2[i]);
-                if (maxDist < Min_Of_Max) {
-                    Min_Of_Max = maxDist;
-                    res = i;
+                if (maxDist < minDistTillNow) {
+                    minDistTillNow = maxDist;
+                    minDistNode = i;
                 }
             }
         }
-        return res;
+
+        return minDistNode;
     }
 };
+ zS 
